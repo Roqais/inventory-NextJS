@@ -1,7 +1,6 @@
 'use client'
-import Image from "next/image";
-import { useState, useEffect } from "react";
-import { firestore } from "@/firebase";
+import React, { useState, useEffect } from "react";
+import { firestore } from "../firebase";
 import { Box, Button, Modal, Stack, TextField, Typography } from "@mui/material";
 import { collection, deleteDoc, getDocs, query, doc, getDoc, setDoc } from "firebase/firestore";
 
@@ -10,6 +9,7 @@ export default function Home() {
   const [open, setOpen] = useState(false);
   const [itemName, setItemName] = useState('');
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
+  const [img, setImg] = useState();
 
   const updateInventory = async () => {
     const snapshot = query(collection(firestore, 'inventory'));
@@ -19,7 +19,7 @@ export default function Home() {
     docs.forEach((doc) => {
       inventoryList.push({
         name: doc.id,
-        ...doc.data(), // Use doc.data() to access the document's data
+        ...doc.data(),
       });
     });
 
@@ -59,6 +59,8 @@ export default function Home() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+ 
+
   // Filter inventory based on search query
   const filteredInventory = inventory.filter(item =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -73,15 +75,17 @@ export default function Home() {
       justifyContent="center"
       alignItems="center"
       gap={2}
-      px={2} // Add horizontal padding for small screens
+      px={2}
     >
+
+
       <Modal
         open={open} onClose={handleClose}
       >
         <Box
           position="absolute"
           top="50%" left="50%"
-          width={{ xs: '90%', sm: 400 }} // Responsive width
+          width={{ xs: '90%', sm: 400 }}
           bgcolor="white"
           border="2px solid black"
           boxShadow={24}
@@ -100,35 +104,24 @@ export default function Home() {
               variant="outlined"
               value={itemName}
               onChange={(e) => setItemName(e.target.value)}
-              style={{ maxWidth: '400px' }} // Responsive max-width
+              style={{ maxWidth: '400px' }}
             />
             <Button
               variant="outlined"
               onClick={() => {
-              addItem(itemName)
-              setItemName('')
-              handleClose();
-            }} 
-              style={{ height: '56px' }} 
+                addItem(itemName);
+                setItemName('');
+                handleClose();
+              }}
+              style={{ height: '56px' }}
             >
               Add
             </Button>
           </Stack>
-          {/* <Stack width="100%"  justifyContent='center' spacing={2} flexWrap="wrap">
-            <TextField
-              variant="outlined"
-              fullWidth
-              value={itemName}
-              onChange={(e) => setItemName(e.target.value)}
-            />
-            <Button variant="outlined" onClick={() => {
-              addItem(itemName);
-              setItemName('');
-              handleClose();
-            }}>Add</Button>
-          </Stack> */}
         </Box>
       </Modal>
+
+      
 
       <Button
         variant="contained"
@@ -145,12 +138,12 @@ export default function Home() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           fullWidth
-          style={{ maxWidth: '400px' }} // Responsive max-width
+          style={{ maxWidth: '400px' }}
         />
         <Button
           variant="outlined"
-          onClick={() => setSearchQuery('')} // Clear search input
-          style={{ height: '56px' }} // Matches the height of the TextField
+          onClick={() => setSearchQuery('')}
+          style={{ height: '56px' }}
         >
           Clear
         </Button>
@@ -167,8 +160,8 @@ export default function Home() {
           {
             filteredInventory.map(({ name, quantity }) => (
               <Box key={name} width='100%' height='150px' display='flex' justifyContent='space-between' alignItems='center' color="#f0f0f0"
-                padding={3} // Adjust padding
-                flexDirection={{ xs: 'column', sm: 'row' }} // Stack vertically on small screens
+                padding={3}
+                flexDirection={{ xs: 'column', sm: 'row' }}
                 textAlign="center"
               >
                 <Typography variant="h5" color="#333" flex="1">
@@ -184,9 +177,9 @@ export default function Home() {
                   <Button
                     variant="contained"
                     sx={{
-                      backgroundColor: 'darkred', // Custom background color
+                      backgroundColor: 'darkred',
                       '&:hover': {
-                        backgroundColor: 'red', // Hover effect
+                        backgroundColor: 'red',
                       },
                     }}
                     onClick={() => {
